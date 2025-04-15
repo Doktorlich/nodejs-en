@@ -1,0 +1,22 @@
+{
+    "name": "05-express",
+    "version": "1.0.0",
+    "main": "app.js",
+    "scripts": {
+        "dev": "nodemon app.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "nodemon": "^3.1.9"
+    },
+    "dependencies": {
+        "ejs": "^3.1.10",
+        "express": "^5.1.0",
+        "express-handlebars": "^8.0.1",
+        "pug": "^3.0.3",
+        "pug-cli": "^1.0.0-alpha6"
+    }
+}
