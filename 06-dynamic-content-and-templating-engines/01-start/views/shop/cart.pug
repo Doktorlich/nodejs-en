@@ -1,8 +1,19 @@
-extends ../includes/main-layout.pug
+extends ../includes/main-layout
 
 block styles
     link(rel="stylesheet", href="/css/main.css")
 block title
     title #{docTitle}
 block content
-    
+    if (products.length>0)
+        ul
+            each product in products
+                li
+                    p #{product.productData.title} ----------------- [ #{product.qty} ]
+
+                        form(action="/cart-delete-item", method="POST")
+                            input(type="hidden", value=product.productData.id, name="productId")
+                            button.btn(type="submit") Delete
+
+    else
+        h1 No Products in Cart
