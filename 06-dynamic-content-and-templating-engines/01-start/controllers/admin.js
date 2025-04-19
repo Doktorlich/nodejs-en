@@ -11,11 +11,17 @@ function getAddProduct(req, res, next) {
 function postAddProduct(req, res, next) {
     const title = req.body.title;
     const imageUrl = req.body.imageUrl;
-    const description = req.body.description;
     const price = req.body.price;
+    const description = req.body.description;
     const product = new Product(null, title, imageUrl, price, description);
-    product.save();
-    res.redirect("/");
+    product
+        .save()
+        .then(() => {
+            res.redirect("/");
+        })
+        .catch(error => {
+            console.error("postAddProduct error", error);
+        });
 }
 
 function getEditProduct(req, res, next) {

@@ -24,5 +24,5 @@ block content
 
 
 				if (editing==="true" || editing===true)
-					input#productId( value=product.id, name="productId", display=none)
+					input(type="hidden", value=product.id, name="productId")
 				button.btn(type="submit") #{editing ? 'Update Product' : 'Add Product'}

@@ -2,35 +2,42 @@ const Product = require("../model/product");
 const Cart = require("../model/cart");
 
 function getProducts(req, res, next) {
-    Product.fetchAll(cbProducts => {
-        res.render("shop/product-list", {
-            cbProducts,
-            docTitle: "All products",
-            path: "/products",
+    Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render("shop/product-list", {
+                cbProducts: rows,
+                docTitle: "All products",
+                path: "/products",
+            });
+        })
+        .catch(error => {
+            console.error(error);
         });
-    });
 }
 
 function getProduct(req, res, next) {
     const prodId = req.params.productsId;
-    Product.findById(prodId, product => {
-        try {
+    Product.findById(prodId)
+        .then(([rows, data]) => {
             res.render("shop/product-details", {
-                docTitle: product.title,
-                product: product,
+                docTitle: rows.title,
+                product: rows[0],
                 path: "/products",
             });
-        } catch (error) {
-            console.log("product:", product);
-            console.error("Error:", error);
-        }
-    });
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 function getIndex(req, res, next) {
-    Product.fetchAll(cbProducts => {
-        res.render("shop/index", { cbProducts, docTitle: "Shop", path: "/" });
-    });
+    Product.fetchAll()
+        .then(([rows, fieldData]) => {
+            res.render("shop/index", { cbProducts: rows, docTitle: "Shop", path: "/" });
+        })
+        .catch(error => {
+            console.error(error);
+        });
 }
 
 function getCart(req, res, next) {
@@ -65,8 +72,6 @@ function postCart(req, res, next) {
     try {
         res.redirect("/cart");
         Product.findById(productId, product => {
-            console.log("productId", productId);
-            console.log("product.price", product.price);
             try {
                 Cart.addProduct(productId, product.price);
             } catch (error) {
