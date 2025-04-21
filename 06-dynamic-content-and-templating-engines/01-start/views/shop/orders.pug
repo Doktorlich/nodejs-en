@@ -5,4 +5,16 @@ block styles
 block title
 	title #{docTitle}
 block content
-	h1 Nothing there!
+	if (orders === 0)
+		h1 Nothing there!
+	else
+		ul
+			each order in orders
+				li
+					h2 #{order.id}
+					ul
+						each product in order.products
+							li
+								p #{product.title} ------------------------- [ #{product.orderItem.quantity} ]
+
+		//orders[0].products[0].title

@@ -19,6 +19,7 @@
         "express-handlebars": "^8.0.1",
         "mysql2": "^3.14.0",
         "pug": "^3.0.3",
-        "pug-cli": "^1.0.0-alpha6"
+        "pug-cli": "^1.0.0-alpha6",
+        "sequelize": "^6.37.7"
     }
 }
