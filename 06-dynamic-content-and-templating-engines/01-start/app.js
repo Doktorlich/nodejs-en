@@ -1,43 +1,30 @@
+// подключение бибилиотеки env  в кглавном файле , для покрытие всей системы
 require("dotenv").config();
-
+// импорт библиотек
 const path = require("path");
 const express = require("express");
 const app = express();
-
+// импорт роутов
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-
+// импорт страницы с выводом ошибки в случае не верного роута
 const { getStatusError404 } = require("./controllers/error");
-const sequelize = require("./util/database");
 
-//association
-const Product = require("./model/product");
-const User = require("./model/user");
-const Cart = require("./model/cart");
-const CartItem = require("./model/cart-item");
-const Order = require("./model/order");
-const OrderItem = require("./model/order-item");
+const mongoConnect = require("./util/database").mongoConnect;
 
-Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
-
+// функции для преобразования полученных данных в читаемый пользователем формат
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+// добавлений публичных путей для подключения сторонних файлов: CSS/JS
 app.use(express.static(path.join(__dirname, "public")));
 
+// ипорт модели пользователей
+const User = require("./model/user");
+//поиск пользователя по конкретному id
 app.use((req, res, next) => {
-    User.findByPk(1)
+    User.findById("6808b5a67fd380fc2af5e9d4")
         .then(user => {
-            req.user = user;
+            req.user = new User(user.username, user.email, user.cart, user._id);
             next();
         })
         .catch(error => {
@@ -52,28 +39,7 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use(getStatusError404);
-sequelize
-    // { alter: true }
-    .sync()
-    .then(result => {
-        return User.findByPk(1);
-    })
-    .then(user => {
-        if (!user) {
-            return User.create({
-                name: "Alice",
-                email: "alice@mail.com",
-                address: "Russia",
-            });
-        }
-        return Promise.resolve(user);
-    })
-    .then(user => {
-        return user.createCart();
-    })
-    .then(user => {
-        app.listen(3000);
-    })
-    .catch(error => {
-        console.error(error);
-    });
+
+mongoConnect(() => {
+    app.listen(3000);
+});

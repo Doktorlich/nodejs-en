@@ -11,10 +11,9 @@ block content
 		ul
 			each order in orders
 				li
-					h2 #{order.id}
+					h2 #{order._id}
 					ul
-						each product in order.products
+						each product in order.items
 							li
-								p #{product.title} ------------------------- [ #{product.orderItem.quantity} ]
+								p #{product.title} ------------------------- [ #{product.quantity} ]
 
-		//orders[0].products[0].title
