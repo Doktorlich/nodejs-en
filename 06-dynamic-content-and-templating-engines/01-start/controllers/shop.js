@@ -1,11 +1,9 @@
 const Product = require("../model/product");
-const User = require("../model/user");
-const Cart = require("../model/cart");
 const Order = require("../model/order");
 
 // страница со всеми товарами
 function getProducts(req, res, next) {
-    Product.fetchAll()
+    Product.find()
         .then(products => {
             res.render("shop/product-list", {
                 cbProducts: products,
@@ -20,10 +18,9 @@ function getProducts(req, res, next) {
 // индивидуальная карточка продукта
 function getProduct(req, res, next) {
     const prodId = req.params.productId;
-    console.log("prodId", prodId);
+
     Product.findById(prodId)
         .then(product => {
-            console.log("getProduct ", product);
             res.render("shop/product-details", {
                 docTitle: product.title,
                 product: product,
@@ -36,7 +33,7 @@ function getProduct(req, res, next) {
 }
 // базовая страница
 function getIndex(req, res, next) {
-    Product.fetchAll()
+    Product.find()
         .then(products => {
             res.render("shop/index", {
                 cbProducts: products,
@@ -51,8 +48,25 @@ function getIndex(req, res, next) {
 // перенаправление товаров из корзины в папку заказов
 function postOrder(req, res, next) {
     req.user
-        .addOrder()
+        .populate("cart.items.productId")
+
+        .then(user => {
+            const products = user.cart.items.map(i => {
+                return { quantity: i.quantity, product: { ...i.productId._doc } };
+            });
+            const order = new Order({
+                user: {
+                    name: req.user.name,
+                    userId: req.user,
+                },
+                products: products,
+            });
+            return order.save();
+        })
         .then(result => {
+            return req.user.clearCart();
+        })
+        .then(() => {
             res.redirect("/orders");
         })
         .catch(error => {
@@ -61,8 +75,7 @@ function postOrder(req, res, next) {
 }
 
 function getOrders(req, res, next) {
-    req.user
-        .getOrder()
+    Order.find({ "user.userId": req.user._id })
         .then(orders => {
             res.render("shop/orders", {
                 docTitle: "Your Orders",
@@ -81,8 +94,10 @@ function getCheckout(req, res, next) {
 // отображение товаров в корзине
 function getCart(req, res, next) {
     req.user
-        .getCart()
-        .then(products => {
+        .populate("cart.items.productId")
+        .then(user => {
+            console.log(user.cart.items);
+            const products = user.cart.items;
             res.render("shop/cart", {
                 docTitle: "Your Cart",
                 path: "/cart",
@@ -96,7 +111,6 @@ function getCart(req, res, next) {
 // отправка запроса на добавление товаров в корзину
 function postCart(req, res, next) {
     const productId = req.body.productId;
-
     Product.findById(productId)
         .then(product => {
             return req.user.addToCart(product);
@@ -112,7 +126,7 @@ function postCart(req, res, next) {
 function postCartDeleteProduct(req, res, next) {
     const prodId = req.body.productId;
     req.user
-        .deleteItemFromCart(prodId)
+        .removeFromCart(prodId)
         .then(result => {
             res.redirect("/cart");
         })

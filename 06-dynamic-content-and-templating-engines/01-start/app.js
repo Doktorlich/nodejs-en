@@ -10,21 +10,20 @@ const shopRoutes = require("./routes/shop");
 // импорт страницы с выводом ошибки в случае не верного роута
 const { getStatusError404 } = require("./controllers/error");
 
-const mongoConnect = require("./util/database").mongoConnect;
-
 // функции для преобразования полученных данных в читаемый пользователем формат
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // добавлений публичных путей для подключения сторонних файлов: CSS/JS
 app.use(express.static(path.join(__dirname, "public")));
 
-// ипорт модели пользователей
+const mongoose = require("mongoose");
 const User = require("./model/user");
+
 //поиск пользователя по конкретному id
 app.use((req, res, next) => {
-    User.findById("6808b5a67fd380fc2af5e9d4")
+    User.findById("6809d79a73b7f0bf8253c93a")
         .then(user => {
-            req.user = new User(user.username, user.email, user.cart, user._id);
+            req.user = user;
             next();
         })
         .catch(error => {
@@ -40,6 +39,28 @@ app.use(shopRoutes);
 
 app.use(getStatusError404);
 
-mongoConnect(() => {
-    app.listen(3000);
-});
+const uri = `mongodb+srv://doktorlich:${process.env.DB_PASSWORD}@cluster0.fehgica.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0`;
+mongoose
+    .connect(uri)
+    .then(() => {
+        return User.findOne(); // ищем пользователя
+    })
+    .then(user => {
+        if (!user) {
+            // если его нет — создаём и сохраняем
+            const newUser = new User({
+                name: "Alice",
+                email: "alice@mail.com",
+                cart: { items: [] },
+            });
+            return newUser.save();
+        }
+        return user;
+    })
+    .then(() => {
+        app.listen(3000); // запускаем сервер после подключения и создания пользователя
+        console.log("Connected to MongoDB");
+    })
+    .catch(error => {
+        console.error(error);
+    });

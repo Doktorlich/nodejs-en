@@ -4,7 +4,9 @@ const User = require("../model/user");
 // возвращает список товаров в админ меню
 function getProducts(req, res, next) {
     //   Product.findAll()
-    Product.fetchAll()
+    Product.find()
+        // .select("-_id")
+        // .populate("userId", "name")
         .then(products => {
             res.render("admin/products", {
                 cbProducts: products,
@@ -26,12 +28,18 @@ function getAddProduct(req, res, next) {
 }
 // отправляет новый товар в БД
 function postAddProduct(req, res, next) {
-    const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
-    const price = req.body.price;
-    const description = req.body.description;
-    const userId = req.user._id;
-    const product = new Product(title, imageUrl, price, description, userId);
+    const titleBody = req.body.title;
+    const imageUrlBody = req.body.imageUrl;
+    const priceBody = req.body.price;
+    const descriptionBody = req.body.description;
+    const userIdBody = req.user._id;
+    const product = new Product({
+        title: titleBody,
+        imageUrl: imageUrlBody,
+        price: priceBody,
+        description: descriptionBody,
+        userId: userIdBody,
+    });
     product
         .save()
         .then(result => {
@@ -69,12 +77,10 @@ function postEditProduct(req, res, next) {
     const updateImageUrl = req.body.imageUrl;
     const updatePrice = req.body.price;
     const updateDescription = req.body.description;
-    Product.update(productId, {
-        title: updateTitle,
-        imageUrl: updateImageUrl,
-        price: updatePrice,
-        description: updateDescription,
-    })
+    Product.updateOne(
+        { _id: productId },
+        { $set: { title: updateTitle, imageUrl: updateImageUrl, price: updatePrice, description: updateDescription } },
+    )
         .then(() => {
             res.redirect("/admin/products");
         })
@@ -85,7 +91,7 @@ function postEditProduct(req, res, next) {
 // отправка запроса на удаление карточки с продуктами
 function postDeleteProduct(req, res, next) {
     const productId = req.body.productId;
-    Product.delete(productId)
+    Product.deleteOne({ _id: productId })
         .then(() => {
             res.redirect("/admin/products");
         })
