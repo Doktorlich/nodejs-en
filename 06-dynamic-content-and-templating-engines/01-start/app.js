@@ -7,8 +7,13 @@ const app = express();
 // импорт роутов
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const authRoutes = require("./routes/auth");
 // импорт страницы с выводом ошибки в случае не верного роута
 const { getStatusError404 } = require("./controllers/error");
+
+// подключении mongoose
+const mongoose = require("mongoose");
+const User = require("./model/user");
 
 // функции для преобразования полученных данных в читаемый пользователем формат
 app.use(express.json());
@@ -16,12 +21,24 @@ app.use(express.urlencoded({ extended: true }));
 // добавлений публичных путей для подключения сторонних файлов: CSS/JS
 app.use(express.static(path.join(__dirname, "public")));
 
-const mongoose = require("mongoose");
-const User = require("./model/user");
+// подключение сессионного хранилища
+const session = require("express-session");
+const MongoDBGStore = require("connect-mongodb-session")(session);
+
+//подключение и настройка сессионного хранилища через mongodb
+const store = new MongoDBGStore({ uri: process.env.MONGODB_URI, collection: "sessions" });
+app.use(session({ secret: "my secret", resave: false, saveUninitialized: false, store: store }));
 
 //поиск пользователя по конкретному id
+
+app.set("view engine", "pug");
+app.set("views", "views");
+
 app.use((req, res, next) => {
-    User.findById("6809d79a73b7f0bf8253c93a")
+    if (!req.session.user) {
+        return next();
+    }
+    User.findById(req.session.user._id)
         .then(user => {
             req.user = user;
             next();
@@ -31,17 +48,8 @@ app.use((req, res, next) => {
         });
 });
 
-app.set("view engine", "pug");
-app.set("views", "views");
-
-app.use("/admin", adminRoutes);
-app.use(shopRoutes);
-
-app.use(getStatusError404);
-
-const uri = `mongodb+srv://doktorlich:${process.env.DB_PASSWORD}@cluster0.fehgica.mongodb.net/shop?retryWrites=true&w=majority&appName=Cluster0`;
 mongoose
-    .connect(uri)
+    .connect(process.env.MONGODB_URI)
     .then(() => {
         return User.findOne(); // ищем пользователя
     })
@@ -64,3 +72,9 @@ mongoose
     .catch(error => {
         console.error(error);
     });
+
+app.use("/admin", adminRoutes);
+app.use(shopRoutes);
+app.use(authRoutes);
+
+app.use(getStatusError404);

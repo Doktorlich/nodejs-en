@@ -9,6 +9,7 @@ function getProducts(req, res, next) {
                 cbProducts: products,
                 docTitle: "All products",
                 path: "/products",
+                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -25,6 +26,7 @@ function getProduct(req, res, next) {
                 docTitle: product.title,
                 product: product,
                 path: "/products",
+                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -39,6 +41,7 @@ function getIndex(req, res, next) {
                 cbProducts: products,
                 docTitle: "Shop",
                 path: "/",
+                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -81,6 +84,7 @@ function getOrders(req, res, next) {
                 docTitle: "Your Orders",
                 path: "/orders",
                 orders: orders,
+                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -89,7 +93,7 @@ function getOrders(req, res, next) {
 }
 
 function getCheckout(req, res, next) {
-    res.render("shop/checkout", { docTitle: "Checkout", path: "/checkout" });
+    res.render("shop/checkout", { docTitle: "Checkout", path: "/checkout", isAuthenticated: req.session.isLoggedIn });
 }
 // отображение товаров в корзине
 function getCart(req, res, next) {
@@ -102,6 +106,7 @@ function getCart(req, res, next) {
                 docTitle: "Your Cart",
                 path: "/cart",
                 products: products,
+                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
