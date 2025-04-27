@@ -14,10 +14,12 @@ block content
                     p.cart-item__qty #{product.quantity}
                     form.cart-item__btn(action="/cart-delete-item", method="POST")
                         input(type="hidden", value=product.productId._id, name="productId")
+                        input(type="hidden", name="_csrf", value=csrfToken)
                         button.btn(type="submit") Delete
         hr
         .centered
             form(action="/create-order", method="POST")
+                input(type="hidden", name="_csrf", value=csrfToken)
                 button.btn(type="submit") OrderNow!
     else
         h1 No Products in Cart

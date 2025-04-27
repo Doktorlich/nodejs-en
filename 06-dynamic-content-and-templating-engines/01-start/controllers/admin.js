@@ -9,7 +9,6 @@ function getProducts(req, res, next) {
                 cbProducts: products,
                 docTitle: "Admin Products",
                 path: "/admin/products",
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -22,7 +21,6 @@ function getAddProduct(req, res, next) {
         docTitle: "Add Product",
         path: "/admin/add-product",
         editing: false,
-        isAuthenticated: req.session.isLoggedIn,
     });
 }
 // отправляет новый товар в БД
@@ -63,7 +61,6 @@ function getEditProduct(req, res, next) {
                 path: "/admin/edit-product",
                 editing: editMode,
                 product: product,
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {

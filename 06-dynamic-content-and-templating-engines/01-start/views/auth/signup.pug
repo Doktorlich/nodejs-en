@@ -7,12 +7,15 @@ block styles
 block title
 	title #{docTitle}
 block content
-	form.login-form(action="/login", method="POST")
+	form.login-form(action="/signup", method="POST")
 		.form-control
 			label(for="email") E-Mail
 			input(type="text", name="email", id="email")
 		.form-control
 			label(for="password") Password
 			input(type="password", name="password", id="password")
+		.form-control
+			label(for="confirmPassword") Confirm Password
+			input(type="password", name="confirmPassword", id="confirmPassword")
 		input(type="hidden", name="_csrf", value=csrfToken)
-		button.btn(type="submit") Login
+		button.btn(type="submit") Signup

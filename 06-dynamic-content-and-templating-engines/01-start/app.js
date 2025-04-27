@@ -4,6 +4,9 @@ require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const app = express();
+// инициализация пакета csrf
+const csrf = require("csurf");
+
 // импорт роутов
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -29,8 +32,11 @@ const MongoDBGStore = require("connect-mongodb-session")(session);
 const store = new MongoDBGStore({ uri: process.env.MONGODB_URI, collection: "sessions" });
 app.use(session({ secret: "my secret", resave: false, saveUninitialized: false, store: store }));
 
-//поиск пользователя по конкретному id
+// работа с csrf
+const csrfProtection = csrf();
+app.use(csrfProtection);
 
+//подключения движка для обработки pug
 app.set("view engine", "pug");
 app.set("views", "views");
 
@@ -48,23 +54,14 @@ app.use((req, res, next) => {
         });
 });
 
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
 mongoose
     .connect(process.env.MONGODB_URI)
-    .then(() => {
-        return User.findOne(); // ищем пользователя
-    })
-    .then(user => {
-        if (!user) {
-            // если его нет — создаём и сохраняем
-            const newUser = new User({
-                name: "Alice",
-                email: "alice@mail.com",
-                cart: { items: [] },
-            });
-            return newUser.save();
-        }
-        return user;
-    })
     .then(() => {
         app.listen(3000); // запускаем сервер после подключения и создания пользователя
         console.log("Connected to MongoDB");

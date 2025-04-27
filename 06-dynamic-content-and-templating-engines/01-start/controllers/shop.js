@@ -9,7 +9,6 @@ function getProducts(req, res, next) {
                 cbProducts: products,
                 docTitle: "All products",
                 path: "/products",
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -26,7 +25,6 @@ function getProduct(req, res, next) {
                 docTitle: product.title,
                 product: product,
                 path: "/products",
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -41,7 +39,6 @@ function getIndex(req, res, next) {
                 cbProducts: products,
                 docTitle: "Shop",
                 path: "/",
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -52,14 +49,13 @@ function getIndex(req, res, next) {
 function postOrder(req, res, next) {
     req.user
         .populate("cart.items.productId")
-
         .then(user => {
             const products = user.cart.items.map(i => {
                 return { quantity: i.quantity, product: { ...i.productId._doc } };
             });
             const order = new Order({
                 user: {
-                    name: req.user.name,
+                    email: req.user.email,
                     userId: req.user,
                 },
                 products: products,
@@ -84,7 +80,6 @@ function getOrders(req, res, next) {
                 docTitle: "Your Orders",
                 path: "/orders",
                 orders: orders,
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
@@ -106,7 +101,6 @@ function getCart(req, res, next) {
                 docTitle: "Your Cart",
                 path: "/cart",
                 products: products,
-                isAuthenticated: req.session.isLoggedIn,
             });
         })
         .catch(error => {
