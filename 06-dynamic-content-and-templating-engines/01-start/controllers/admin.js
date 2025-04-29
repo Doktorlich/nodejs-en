@@ -3,7 +3,8 @@ const User = require("../model/user");
 
 // возвращает список товаров в админ меню
 function getProducts(req, res, next) {
-    Product.find()
+    //
+    Product.find({ userId: req.user._id })
         .then(products => {
             res.render("admin/products", {
                 cbProducts: products,
@@ -74,12 +75,30 @@ function postEditProduct(req, res, next) {
     const updateImageUrl = req.body.imageUrl;
     const updatePrice = req.body.price;
     const updateDescription = req.body.description;
-    Product.updateOne(
-        { _id: productId },
-        { $set: { title: updateTitle, imageUrl: updateImageUrl, price: updatePrice, description: updateDescription } },
-    )
-        .then(() => {
-            res.redirect("/admin/products");
+
+    Product.findById(productId)
+        .then(product => {
+            if (product.userId.toString() !== req.user._id.toString()) {
+                return res.redirect("/");
+            } else {
+                Product.updateOne(
+                    { _id: productId },
+                    {
+                        $set: {
+                            title: updateTitle,
+                            imageUrl: updateImageUrl,
+                            price: updatePrice,
+                            description: updateDescription,
+                        },
+                    },
+                )
+                    .then(product => {
+                        res.redirect("/admin/products");
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
         })
         .catch(error => {
             console.error(error);
@@ -88,9 +107,19 @@ function postEditProduct(req, res, next) {
 // отправка запроса на удаление карточки с продуктами
 function postDeleteProduct(req, res, next) {
     const productId = req.body.productId;
-    Product.deleteOne({ _id: productId })
-        .then(() => {
-            res.redirect("/admin/products");
+    Product.findById(productId)
+        .then(product => {
+            if (product.userId.toString() !== req.user._id.toString()) {
+                return res.redirect("/");
+            } else {
+                Product.deleteOne({ _id: productId })
+                    .then(() => {
+                        res.redirect("/admin/products");
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            }
         })
         .catch(error => {
             console.error(error);
