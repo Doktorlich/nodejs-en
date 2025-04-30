@@ -21,3 +21,12 @@
 .form-control textarea:focus {
   outline-color: #00695c;
 }
+.error-validation{
+  text-align: center;
+  margin-inline: auto;
+  border: 1px solid #af0000;
+  color: red;
+  width: 80%;
+
+  margin-bottom: 40px;
+}

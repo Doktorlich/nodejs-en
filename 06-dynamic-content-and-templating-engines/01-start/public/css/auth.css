@@ -3,7 +3,7 @@
 	flex-direction: column;
 	margin: 35px auto;
 	width: 400px;
-	height: 350px;
+	height: 450px;
 	border-radius: 10px;
 	box-shadow: 0 0 10px 1px #a1a1a1;
 	padding-top: 40px;
@@ -20,4 +20,13 @@
 .btn{
 	width: 100px;
 	margin-inline: auto;
+}
+.error-validation{
+	text-align: center;
+	margin-inline: auto;
+	border: 1px solid #af0000;
+	color: red;
+	width: 80%;
+	height: 30px;
+	margin-bottom: 20px;
 }

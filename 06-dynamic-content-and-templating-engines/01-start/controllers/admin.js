@@ -1,6 +1,6 @@
 const Product = require("../model/product");
 const User = require("../model/user");
-
+const { validationResult } = require("express-validator");
 // возвращает список товаров в админ меню
 function getProducts(req, res, next) {
     //
@@ -21,6 +21,10 @@ function getAddProduct(req, res, next) {
     res.render("admin/edit-product", {
         docTitle: "Add Product",
         path: "/admin/add-product",
+        errorMessage: null,
+        oldInput: { tittle: "", imageUrl: "", prise: "", description: "" },
+        validationErrors: [],
+        csrfToken: req.csrfToken(),
         editing: false,
     });
 }
@@ -31,6 +35,8 @@ function postAddProduct(req, res, next) {
     const priceBody = req.body.price;
     const descriptionBody = req.body.description;
     const userIdBody = req.user._id;
+    const errors = validationResult(req);
+
     const product = new Product({
         title: titleBody,
         imageUrl: imageUrlBody,
@@ -38,6 +44,19 @@ function postAddProduct(req, res, next) {
         description: descriptionBody,
         userId: userIdBody,
     });
+    console.log("product postAddProduct", product);
+    console.log("product postAddProduct", product.title);
+    if (!errors.isEmpty()) {
+        return res.status(422).render("admin/edit-product", {
+            docTitle: "Add Product",
+            path: "/admin/add-product",
+            errorMessage: errors.array()[0].msg,
+            validationErrors: errors.array(),
+            oldInput: { title: titleBody, imageUrl: imageUrlBody, price: priceBody, description: descriptionBody },
+            csrfToken: req.csrfToken(),
+        });
+    }
+
     product
         .save()
         .then(result => {
@@ -62,6 +81,10 @@ function getEditProduct(req, res, next) {
                 path: "/admin/edit-product",
                 editing: editMode,
                 product: product,
+                errorMessage: null,
+                oldInput: { tittle: "", imageUrl: "", prise: "", description: "" },
+                validationErrors: [],
+                csrfToken: req.csrfToken(),
             });
         })
         .catch(error => {
@@ -76,11 +99,30 @@ function postEditProduct(req, res, next) {
     const updatePrice = req.body.price;
     const updateDescription = req.body.description;
 
+    const errors = validationResult(req);
+
     Product.findById(productId)
         .then(product => {
             if (product.userId.toString() !== req.user._id.toString()) {
                 return res.redirect("/");
             } else {
+                if (!errors.isEmpty()) {
+                    return res.status(422).render(`admin/edit-product`, {
+                        docTitle: "Add Product",
+                        path: "/admin/edit-product",
+                        errorMessage: errors.array()[0].msg,
+                        validationErrors: errors.array(),
+                        oldInput: {
+                            productId: productId,
+                            title: updateTitle,
+                            imageUrl: updateImageUrl,
+                            price: updatePrice,
+                            description: updateDescription,
+                        },
+                        csrfToken: req.csrfToken(),
+                        editing: true,
+                    });
+                }
                 Product.updateOne(
                     { _id: productId },
                     {
