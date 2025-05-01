@@ -78,8 +78,9 @@ function postLogin(req, res, next) {
             });
         })
         .catch(err => {
-            console.error("Ошибка в postLogin:", err);
-            res.redirect("/login");
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 
@@ -225,8 +226,9 @@ function getNewPassword(req, res, next) {
             });
         })
         .catch(err => {
-            console.error(err);
-            res.redirect("/reset");
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 
@@ -259,8 +261,9 @@ function postNewPassword(req, res, next) {
             res.redirect("/login");
         })
         .catch(err => {
-            console.error("Ошибка в postNewPassword:", err);
-            res.redirect("/reset");
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 

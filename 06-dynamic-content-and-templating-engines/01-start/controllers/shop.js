@@ -11,8 +11,10 @@ function getProducts(req, res, next) {
                 path: "/products",
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // индивидуальная карточка продукта
@@ -27,8 +29,10 @@ function getProduct(req, res, next) {
                 path: "/products",
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // базовая страница
@@ -41,8 +45,10 @@ function getIndex(req, res, next) {
                 path: "/",
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // перенаправление товаров из корзины в папку заказов
@@ -68,8 +74,10 @@ function postOrder(req, res, next) {
         .then(() => {
             res.redirect("/orders");
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 
@@ -82,8 +90,10 @@ function getOrders(req, res, next) {
                 orders: orders,
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 
@@ -102,8 +112,10 @@ function getCart(req, res, next) {
                 products: products,
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // отправка запроса на добавление товаров в корзину
@@ -116,8 +128,10 @@ function postCart(req, res, next) {
         .then(result => {
             res.redirect("/cart");
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // удаление товара из корзины
@@ -128,8 +142,10 @@ function postCartDeleteProduct(req, res, next) {
         .then(result => {
             res.redirect("/cart");
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 

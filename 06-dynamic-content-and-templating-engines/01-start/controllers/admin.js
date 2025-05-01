@@ -12,8 +12,10 @@ function getProducts(req, res, next) {
                 path: "/admin/products",
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // создает новый товар
@@ -63,8 +65,10 @@ function postAddProduct(req, res, next) {
             console.log("Created product");
             res.redirect("/admin/products");
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // по нажатию активирует карточку редактирование товара
@@ -87,8 +91,10 @@ function getEditProduct(req, res, next) {
                 csrfToken: req.csrfToken(),
             });
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // оптравка запроса на применение изменений из формы
@@ -137,13 +143,17 @@ function postEditProduct(req, res, next) {
                     .then(product => {
                         res.redirect("/admin/products");
                     })
-                    .catch(error => {
-                        console.error(error);
+                    .catch(err => {
+                        const error = new Error(err);
+                        error.httpStatusCode = 500;
+                        return next(error);
                     });
             }
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 // отправка запроса на удаление карточки с продуктами
@@ -158,13 +168,17 @@ function postDeleteProduct(req, res, next) {
                     .then(() => {
                         res.redirect("/admin/products");
                     })
-                    .catch(error => {
-                        console.error(error);
+                    .catch(err => {
+                        const error = new Error(err);
+                        error.httpStatusCode = 500;
+                        return next(error);
                     });
             }
         })
-        .catch(error => {
-            console.error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 }
 

@@ -12,7 +12,7 @@ const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
 // импорт страницы с выводом ошибки в случае не верного роута
-const { getStatusError404 } = require("./controllers/error");
+const errorControllers = require("./controllers/error");
 
 // подключении mongoose
 const mongoose = require("mongoose");
@@ -46,11 +46,14 @@ app.use((req, res, next) => {
     }
     User.findById(req.session.user._id)
         .then(user => {
+            if (!user) {
+                return next();
+            }
             req.user = user;
             next();
         })
         .catch(error => {
-            console.error(error);
+            throw new Error(error);
         });
 });
 
@@ -73,5 +76,5 @@ mongoose
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
-
-app.use(getStatusError404);
+app.get("/500", errorControllers.getStatusError500);
+app.use(errorControllers.getStatusError404);
