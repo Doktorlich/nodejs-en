@@ -7,6 +7,9 @@ const app = express();
 // инициализация пакета csrf
 const csrf = require("csurf");
 
+// парсер для файлов
+const multer = require("multer");
+
 // импорт роутов
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
@@ -18,11 +21,42 @@ const errorControllers = require("./controllers/error");
 const mongoose = require("mongoose");
 const User = require("./model/user");
 
-// функции для преобразования полученных данных в читаемый пользователем формат
+// функции для преобразования полученных данных в читаемый пользователем формат(bodyparser)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// const upload = multer({ storage });
+// app.use("admin/add-product", upload.single("image"), (req, res) => {
+//     console.log(req.file);
+//     console.log("Файл загружен");
+// });
+
+// настройка хранилища файлов
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "uploads/");
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + "-" + file.originalname);
+    },
+});
+// фильтрация файлов при загрузке
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+        cb(null, true);
+        console.log("The file has been uploaded");
+    } else {
+        console.log("File upload failed: Incorrect format");
+        cb(null, false);
+    }
+};
+// запуск парсера
+app.use(multer({ storage, fileFilter }).single("image"));
+
 // добавлений публичных путей для подключения сторонних файлов: CSS/JS
 app.use(express.static(path.join(__dirname, "public")));
+// добавлений публичных путей для подключения сторонних файлов: images
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // подключение сессионного хранилища
 const session = require("express-session");
@@ -39,6 +73,11 @@ app.use(csrfProtection);
 //подключения движка для обработки pug
 app.set("view engine", "pug");
 app.set("views", "views");
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 app.use((req, res, next) => {
     if (!req.session.user) {
@@ -52,15 +91,23 @@ app.use((req, res, next) => {
             req.user = user;
             next();
         })
-        .catch(error => {
-            throw new Error(error);
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
         });
 });
+app.use("/admin", adminRoutes);
+app.use(shopRoutes);
+app.use(authRoutes);
+app.use((error, req, res, next) => {
+    console.error("❌ SERVER ERROR:", error);
 
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    next();
+    res.status(error.httpStatusCode || 500).render("500", {
+        docTitle: "Error!",
+        path: "/500",
+        isAuthenticated: req.session ? req.session.isLoggedIn : false,
+    });
 });
 
 mongoose
@@ -73,8 +120,6 @@ mongoose
         console.error(error);
     });
 
-app.use("/admin", adminRoutes);
-app.use(shopRoutes);
-app.use(authRoutes);
-app.get("/500", errorControllers.getStatusError500);
+// app.get("/500", errorControllers.getStatusError500);
 app.use(errorControllers.getStatusError404);
+// глобальный обработчик ошибок

@@ -11,7 +11,10 @@ const validEditProduct = [
         .isLength({ min: 5 })
         .withMessage("поле title должно содержать минимум 5 символов")
         .trim(),
-    check("imageUrl").notEmpty().withMessage("поле imageUrl не должно быть пустым").trim(),
+    // check("image").notEmpty().withMessage("поле imageUrl не должно быть пустым")
+    // .isURL()
+    // .withMessage("поле должно быть url адресом")
+    // .trim(),
     check("price")
         .notEmpty()
         .withMessage("Цена обязательна")
