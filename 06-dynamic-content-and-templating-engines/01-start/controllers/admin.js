@@ -173,8 +173,8 @@ function postEditProduct(req, res, next) {
         });
 }
 // отправка запроса на удаление карточки с продуктами
-function postDeleteProduct(req, res, next) {
-    const productId = req.body.productId;
+function deleteProduct(req, res, next) {
+    const productId = req.params.productId;
 
     Product.findById(productId)
         .then(product => {
@@ -187,12 +187,11 @@ function postDeleteProduct(req, res, next) {
             } else {
                 Product.deleteOne({ _id: productId })
                     .then(() => {
-                        res.redirect("/admin/products");
+                        console.log("destroy product");
+                        res.status(200).json({ message: "Success" });
                     })
                     .catch(err => {
-                        const error = new Error(err);
-                        error.httpStatusCode = 500;
-                        return next(error);
+                        res.status(500).json({ message: "Deleting product failed" });
                     });
             }
         })
@@ -209,5 +208,5 @@ module.exports = {
     getProducts,
     getEditProduct,
     postEditProduct,
-    postDeleteProduct,
+    deleteProduct,
 };
