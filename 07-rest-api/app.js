@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
+const { Server } = require("socket.io");
+
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
 
@@ -59,7 +61,11 @@ app.use((error, req, res, next) => {
 mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
-        app.listen(8080); // запускаем сервер после подключения и создания пользователя
+        const server = app.listen(8080); // запускаем сервер после подключения и создания пользователя
+        const io = require("./socket").init(server);
+        io.on("connection", socket => {
+            console.log("Client connected");
+        });
         console.log("Connected to MongoDB");
     })
     .catch(error => {
