@@ -1,235 +1,100 @@
-import React, { Component, Fragment } from "react";
-import { Route, Switch, Redirect, withRouter } from "react-router-dom";
+const path = require("path");
 
-import Layout from "./components/Layout/Layout";
-import Backdrop from "./components/Backdrop/Backdrop";
-import Toolbar from "./components/Toolbar/Toolbar";
-import MainNavigation from "./components/Navigation/MainNavigation/MainNavigation";
-import MobileNavigation from "./components/Navigation/MobileNavigation/MobileNavigation";
-import ErrorHandler from "./components/ErrorHandler/ErrorHandler";
-import FeedPage from "./pages/Feed/Feed";
-import SinglePostPage from "./pages/Feed/SinglePost/SinglePost";
-import LoginPage from "./pages/Auth/Login";
-import SignupPage from "./pages/Auth/Signup";
-import "./App.css";
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const multer = require("multer");
+const graphqlHttp = require("express-graphql");
 
-class App extends Component {
-    state = {
-        showBackdrop: false,
-        showMobileNav: false,
-        isAuth: false,
-        token: null,
-        userId: null,
-        authLoading: false,
-        error: null,
-    };
+const graphqlSchema = require("./graphql/schema");
+const graphqlResolver = require("./graphql/resolvers");
+const auth = require("./middleware/auth");
+const { clearImage } = require("./util/file");
 
-    componentDidMount() {
-        const token = localStorage.getItem("token");
-        const expiryDate = localStorage.getItem("expiryDate");
-        if (!token || !expiryDate) {
-            return;
-        }
-        if (new Date(expiryDate) <= new Date()) {
-            this.logoutHandler();
-            return;
-        }
-        const userId = localStorage.getItem("userId");
-        const remainingMilliseconds = new Date(expiryDate).getTime() - new Date().getTime();
-        this.setState({ isAuth: true, token: token, userId: userId });
-        this.setAutoLogout(remainingMilliseconds);
+const app = express();
+
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "images");
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString() + "-" + file.originalname);
+    },
+});
+
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === "image/png" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/jpeg"
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
     }
+};
 
-    mobileNavHandler = isOpen => {
-        this.setState({ showMobileNav: isOpen, showBackdrop: isOpen });
-    };
+// app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form>
+app.use(bodyParser.json()); // application/json
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
-    backdropClickHandler = () => {
-        this.setState({ showBackdrop: false, showMobileNav: false, error: null });
-    };
-
-    logoutHandler = () => {
-        this.setState({ isAuth: false, token: null });
-        localStorage.removeItem("token");
-        localStorage.removeItem("expiryDate");
-        localStorage.removeItem("userId");
-    };
-
-    loginHandler = (event, authData) => {
-        event.preventDefault();
-        this.setState({ authLoading: true });
-        fetch("http://localhost:8080/auth/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: authData.email,
-                password: authData.password,
-            }),
-        })
-            .then(res => {
-                if (res.status === 422) {
-                    throw new Error("Validation failed.");
-                }
-                if (res.status !== 200 && res.status !== 201) {
-                    console.log("Error!");
-                    throw new Error("Could not authenticate you!");
-                }
-                return res.json();
-            })
-            .then(resData => {
-                console.log(resData);
-                this.setState({
-                    isAuth: true,
-                    token: resData.token,
-                    authLoading: false,
-                    userId: resData.userId,
-                });
-                localStorage.setItem("token", resData.token);
-                localStorage.setItem("userId", resData.userId);
-                const remainingMilliseconds = 60 * 60 * 1000;
-                const expiryDate = new Date(new Date().getTime() + remainingMilliseconds);
-                localStorage.setItem("expiryDate", expiryDate.toISOString());
-                this.setAutoLogout(remainingMilliseconds);
-            })
-            .catch(err => {
-                console.log(err);
-                this.setState({
-                    isAuth: false,
-                    authLoading: false,
-                    error: err,
-                });
-            });
-    };
-
-    signupHandler = (event, authData) => {
-        event.preventDefault();
-        this.setState({ authLoading: true });
-        fetch("http://localhost:8080/auth/signup", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: authData.signupForm.email.value,
-                password: authData.signupForm.password.value,
-                name: authData.signupForm.name.value,
-            }),
-        })
-            .then(res => {
-                if (res.status === 422) {
-                    throw new Error(
-                        "Validation failed. Make sure the email address isn't used yet!",
-                    );
-                }
-                if (res.status !== 200 && res.status !== 201) {
-                    console.log("Error!");
-                    throw new Error("Creating a user failed!");
-                }
-                return res.json();
-            })
-            .then(resData => {
-                console.log(resData);
-                this.setState({ isAuth: false, authLoading: false });
-                this.props.history.replace("/");
-            })
-            .catch(err => {
-                console.log(err);
-                this.setState({
-                    isAuth: false,
-                    authLoading: false,
-                    error: err,
-                });
-            });
-    };
-
-    setAutoLogout = milliseconds => {
-        setTimeout(() => {
-            this.logoutHandler();
-        }, milliseconds);
-    };
-
-    errorHandler = () => {
-        this.setState({ error: null });
-    };
-
-    render() {
-        let routes = (
-            <Switch>
-                <Route
-                    path="/"
-                    exact
-                    render={props => (
-                        <LoginPage
-                            {...props}
-                            onLogin={this.loginHandler}
-                            loading={this.state.authLoading}
-                        />
-                    )}
-                />
-                <Route
-                    path="/signup"
-                    exact
-                    render={props => (
-                        <SignupPage
-                            {...props}
-                            onSignup={this.signupHandler}
-                            loading={this.state.authLoading}
-                        />
-                    )}
-                />
-                <Redirect to="/" />
-            </Switch>
-        );
-        if (this.state.isAuth) {
-            routes = (
-                <Switch>
-                    <Route
-                        path="/"
-                        exact
-                        render={props => (
-                            <FeedPage userId={this.state.userId} token={this.state.token} />
-                        )}
-                    />
-                    <Route
-                        path="/:postId"
-                        render={props => (
-                            <SinglePostPage
-                                {...props}
-                                userId={this.state.userId}
-                                token={this.state.token}
-                            />
-                        )}
-                    />
-                    <Redirect to="/" />
-                </Switch>
-            );
-        }
-        return (
-            <Fragment>
-                {this.state.showBackdrop && <Backdrop onClick={this.backdropClickHandler} />}
-                <ErrorHandler error={this.state.error} onHandle={this.errorHandler} />
-                <Layout
-                    header={
-                        <Toolbar>
-                            <MainNavigation
-                                onOpenMobileNav={this.mobileNavHandler.bind(this, true)}
-                                onLogout={this.logoutHandler}
-                                isAuth={this.state.isAuth}
-                            />
-                        </Toolbar>
-                    }
-                    mobileNav={
-                        <MobileNavigation
-                            open={this.state.showMobileNav}
-                            mobile
-                            onChooseItem={this.mobileNavHandler.bind(this, false)}
-                            onLogout={this.logoutHandler}
-                            isAuth={this.state.isAuth}
-                        />
-                    }
-                />
-                {routes}
-            </Fragment>
-        );
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, PATCH, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    if (req.method === "OPTIONS") {
+        return res.sendStatus(200);
     }
-}
+    next();
+});
 
-export default withRouter(App);
+app.use(auth);
+
+app.put("/post-image", (req, res, next) => {
+    if (!req.isAuth) {
+        throw new Error("Not authenticated!");
+    }
+    if (!req.file) {
+        return res.status(200).json({ message: "No file provided!" });
+    }
+    if (req.body.oldPath) {
+        clearImage(req.body.oldPath);
+    }
+    return res.status(201).json({ message: "File stored.", filePath: req.file.path });
+});
+
+app.use(
+    "/graphql",
+    graphqlHttp({
+        schema: graphqlSchema,
+        rootValue: graphqlResolver,
+        graphiql: true,
+        formatError(err) {
+            if (!err.originalError) {
+                return err;
+            }
+            const data = err.originalError.data;
+            const message = err.message || "An error occurred.";
+            const code = err.originalError.code || 500;
+            return { message: message, status: code, data: data };
+        },
+    }),
+);
+
+app.use((error, req, res, next) => {
+    console.log(error);
+    const status = error.statusCode || 500;
+    const message = error.message;
+    const data = error.data;
+    res.status(status).json({ message: message, data: data });
+});
+
+mongoose
+    .connect(
+        "mongodb+srv://maximilian:9u4biljMQc4jjqbe@cluster0-ntrwp.mongodb.net/messages?retryWrites=true",
+    )
+    .then(result => {
+        app.listen(8080);
+    })
+    .catch(err => console.log(err));
