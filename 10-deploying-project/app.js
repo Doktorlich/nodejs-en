@@ -49,6 +49,14 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + "-" + file.originalname);
     },
 });
+
+// Убедимся, что папка uploads существует
+const uploadsPath = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsPath)) {
+    fs.mkdirSync(uploadsPath);
+    console.log("✅ uploads folder created");
+}
+
 // фильтрация файлов при загрузке
 const fileFilter = (req, file, cb) => {
     if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
