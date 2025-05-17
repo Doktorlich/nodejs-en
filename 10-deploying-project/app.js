@@ -142,7 +142,7 @@ mongoose
     .connect(process.env.MONGODB_URI)
     .then(() => {
         // https.createServer({ key: privateKey, cert: certificate }, app).listen(3000); // запускаем сервер после подключения и создания пользователя
-        app.listen(3000); // запускаем сервер после подключения и создания пользователя
+        app.listen(3001); // запускаем сервер после подключения и создания пользователя
         console.log("Connected to MongoDB");
     })
     .catch(error => {

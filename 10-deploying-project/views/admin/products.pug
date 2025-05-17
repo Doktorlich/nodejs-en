@@ -23,7 +23,9 @@ block content
 
 							input(type="hidden", name="_csrf", value=csrfToken)
 							input(type="hidden", name="productId", value=product._id)
-							button.btn(type=button, onclick="deleteItem(this)") Delete
+							//button.btn(type=button, onclick="deleteItem(this)") Delete
+							button.btn(type="button", class="delete-btn") Delete
 		else
 			h1 No products
 	script(defer src="/js/admin.js")
+
