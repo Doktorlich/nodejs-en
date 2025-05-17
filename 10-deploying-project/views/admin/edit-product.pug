@@ -1,0 +1,59 @@
+extends ../includes/main-layout
+
+block styles
+	link(rel="stylesheet", href="/css/main.css")
+	link(rel="stylesheet", href="/css/forms.css")
+	link(rel="stylesheet", href="/css/product.css")
+
+block title
+	title #{docTitle}
+block content
+	main
+		//a.btn(href="/admin/edit-product/"+product._id+"?edit=true") Edit
+		if editing
+			form.product-form(action="/admin/edit-product", method="POST", enctype="multipart/form-data")
+				if validationErrors
+					each error in validationErrors
+						.error-validation #{error.msg}
+				.form-control
+					label(for="title") Title
+					input#title(type="text", name="title", value=(validationErrors.length > 0  ? oldInput.title : product.title))
+				//.form-control
+				//	label(for="imageUrl") Image Url
+				//	input#imageUrl(type="text", name="imageUrl", value=(validationErrors.length > 0 ? oldInput.imageUrl : product.imageUrl))
+				.form-control
+					label(for="image") Image Url
+					input#image(type="file", name="image")
+				.form-control
+					label(for="price") Price
+					input#price(type="number", name="price" step=0.01, value=(validationErrors.length > 0  ? oldInput.price : product.price))
+				.form-control
+					label(for="description") Description
+					textarea#description(name="description", rows="5") #{validationErrors.length > 0  ? oldInput.description : product.description}
+
+
+					input(type="hidden", value=(validationErrors.length > 0  ? oldInput.productId : product._id), name="productId")
+					input(type="hidden", name="_csrf", value=csrfToken)
+					button.btn(type="submit") Update Product
+		else
+			form.product-form(action="/admin/add-product", method="POST", enctype="multipart/form-data")
+				if validationErrors
+					each error in validationErrors
+						.error-validation #{error.msg}
+				.form-control
+					label(for="title") Title
+					input#title(type="text", name="title" value=oldInput.title)
+				//.form-control
+				//	label(for="imageUrl") Image Url
+				//	input#imageUrl(type="text", name="imageUrl", value=oldInput.imageUrl)
+				.form-control
+					label(for="image") Image
+					input#image(type="file", name="image", value=oldInput.imageUrl)
+				.form-control
+					label(for="price") Price
+					input#price(type="number", name="price" step=0.01, value=oldInput.price)
+				.form-control
+					label(for="description") Description
+					textarea#description(name="description", rows="5") #{oldInput.description}
+					input(type="hidden", name="_csrf", value=csrfToken)
+					button.btn(type="submit") Add Product

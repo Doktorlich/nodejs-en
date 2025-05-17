@@ -1,0 +1,16 @@
+[
+  {
+    "id": "0.058112429946334476",
+    "title": "1",
+    "imageUrl": "https://media.istockphoto.com/id/173015527/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%BF%D1%83%D1%81%D1%82%D0%BE%D0%B9-%D0%BA%D1%80%D0%B0%D1%81%D0%BD%D1%8B%D0%B9-hardback-%D0%BA%D0%BD%D0%B8%D0%B3%D0%B0.jpg?s=612x612&w=0&k=20&c=pdyl-CdHJKcuMaBR6rEvPODAbv9bZSi3MuoH88sMV-A=",
+    "price": "25.99",
+    "description": "123"
+  },
+  {
+    "id": "0.40471754024743256",
+    "title": "2",
+    "imageUrl": "https://media.istockphoto.com/id/1957612313/ru/%D1%84%D0%BE%D1%82%D0%BE/teenage-girl-sitting-on-windowsill-and-reading-a-book.jpg?s=1024x1024&w=is&k=20&c=mjROUfdwDGF7_TNXxfYzQZayZVATlsesyCWoXONPS0o=",
+    "price": "19.99",
+    "description": "123"
+  }
+]

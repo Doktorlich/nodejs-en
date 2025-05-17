@@ -1,0 +1,37 @@
+.order-list__item-list {
+    list-style: none;
+    width: 800px;
+    padding: 10px;
+    box-shadow: 0 0 10px 1px #a1a1a1;
+    border-radius: 15px;
+    margin-inline: auto;
+}
+.order-list__item {
+	display: flex;
+	flex-direction: column;
+}
+.order-list__item-id {
+
+}
+
+.order__item-list {
+	list-style: none;
+	padding: 0;
+	margin-inline: auto;
+
+}
+.order__item {
+	display: flex;
+	justify-content: space-between;
+	width: 600px;
+	height: 30px;
+	align-items: center;
+
+}
+
+.order__item-title {
+}
+.order__item-quantity {
+}
+.order__item-link {
+}

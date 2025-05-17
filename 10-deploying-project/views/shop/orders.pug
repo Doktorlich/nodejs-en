@@ -1,0 +1,23 @@
+extends ../includes/main-layout
+
+block styles
+	link(rel="stylesheet", href="/css/main.css")
+	link(rel="stylesheet", href="/css/order.css")
+block title
+	title #{docTitle}
+block content
+	if (orders === 0)
+		h1 Nothing there!
+	else
+		ul.order-list__item-list
+			each order in orders
+				li.order-list__item
+					h2.order-list__item-id Order #{"#" + order._id}
+					a.order__item-link(href=("/orders/" + order._id)) Invoice
+					ul.order__item-list
+						each pr in order.products
+							li.order__item
+								p.order__item-title #{pr.product.title}
+								p.order__item-quantity [ #{pr.quantity} ]
+							hr
+
