@@ -1,0 +1,114 @@
+{
+    "compilerOptions": {
+        /* Посетите https://aka.ms/tsconfig, чтобы узнать больше об этом файле */
+
+        /* Проекты */
+        // "incremental": true,                              /* Сохранять файлы .tsbuildinfo для инкрементной компиляции проектов. */
+        // "composite": true,                                /* Включить ограничения, позволяющие использовать проект TypeScript с ссылками на проекты. */
+        // "tsBuildInfoFile": "./.tsbuildinfo",              /* Указать путь к файлу .tsbuildinfo для инкрементной компиляции. */
+        // "disableSourceOfProjectReferenceRedirect": true,  /* Отключить предпочтение исходных файлов вместо файлов деклараций при ссылке на составные проекты. */
+        // "disableSolutionSearching": true,                 /* Отключить проверку ссылок на несколько проектов при редактировании. */
+        // "disableReferencedProjectLoad": true,             /* Уменьшить количество автоматически загружаемых проектов TypeScript. */
+
+        /* Язык и среда */
+        "target": "es2016"                                   /* Установить версию JavaScript для сгенерированного кода и подключаемых библиотек. */,
+        // "lib": [],                                        /* Указать набор файлов объявлений библиотек, описывающих целевую среду выполнения. */
+        // "jsx": "preserve",                                /* Указать, какой JSX-код должен генерироваться. */
+        // "libReplacement": true,                           /* Включить замену библиотек. */
+        // "experimentalDecorators": true,                   /* Включить экспериментальную поддержку декораторов. */
+        // "emitDecoratorMetadata": true,                    /* Генерировать метаданные типов для декорированных объявлений. */
+        // "jsxFactory": "",                                 /* Указать фабрику JSX, например, 'React.createElement' или 'h'. */
+        // "jsxFragmentFactory": "",                         /* Указать JSX-фабрику для фрагментов, например, 'React.Fragment'. */
+        // "jsxImportSource": "",                            /* Указать модуль, откуда импортируются функции JSX при использовании 'jsx: react-jsx*'. */
+        // "reactNamespace": "",                             /* Указать объект, вызываемый для 'createElement'. Только для 'react'-JSX. */
+        // "noLib": true,                                    /* Не включать никакие файлы библиотек, включая стандартный lib.d.ts. */
+        // "useDefineForClassFields": true,                  /* Генерировать поля классов в соответствии со стандартом ECMAScript. */
+        // "moduleDetection": "auto",                        /* Управлять методом определения модульного формата JS-файлов. */
+
+        /* Модули */
+        "module": "commonjs"                                 /* Указать формат модуля для скомпилированного кода. */,
+        "rootDir": "./src"                                   /* Указать корневую папку исходных файлов. */,
+        "moduleResolution": "node10"                         /* Указать, как TypeScript ищет файл по модульному имени. */,
+        // "baseUrl": "./",                                  /* Указать базовую директорию для разрешения неотносительных модулей. */
+        // "paths": {},                                      /* Переопределить пути для модулей. */
+        // "rootDirs": [],                                   /* Объединить несколько папок как одну при разрешении модулей. */
+        // "typeRoots": [],                                  /* Указать папки, аналогичные './node_modules/@types'. */
+        // "types": [],                                      /* Указать имена пакетов типов, которые будут включены без явного импорта. */
+        // "allowUmdGlobalAccess": true,                     /* Разрешить доступ к глобальным переменным UMD из модулей. */
+        // "moduleSuffixes": [],                             /* Указать суффиксы, по которым искать модули. */
+        // "allowImportingTsExtensions": true,               /* Разрешить импорты с расширением .ts. Требует '--moduleResolution bundler'. */
+        // "rewriteRelativeImportExtensions": true,          /* Переписывать расширения '.ts', '.tsx' и др. в относительных импортах на JS-эквиваленты. */
+        // "resolvePackageJsonExports": true,                /* Использовать поле 'exports' из package.json при разрешении модулей. */
+        // "resolvePackageJsonImports": true,                /* Использовать поле 'imports' из package.json при разрешении модулей. */
+        // "customConditions": [],                           /* Добавить условия при разрешении импортов. */
+        // "noUncheckedSideEffectImports": true,             /* Проверять импорты с побочными эффектами. */
+        // "resolveJsonModule": true,                        /* Разрешить импорт .json файлов. */
+        // "allowArbitraryExtensions": true,                 /* Разрешить импорт файлов с любыми расширениями при наличии декларации. */
+        // "noResolve": true,                                /* Запретить расширение количества файлов через 'import', 'require' и '<reference>'. */
+
+        /* Поддержка JavaScript */
+        // "allowJs": true,                                  /* Разрешить включение JavaScript-файлов в проект. */
+        // "checkJs": true,                                  /* Включить проверку типов в JavaScript-файлах. */
+        // "maxNodeModuleJsDepth": 1,                        /* Максимальная глубина проверки JS-файлов из node_modules. */
+
+        /* Генерация */
+        // "declaration": true,                              /* Генерировать .d.ts файлы. */
+        // "declarationMap": true,                           /* Создавать source map файлы для .d.ts. */
+        // "emitDeclarationOnly": true,                      /* Генерировать только .d.ts файлы без JS. */
+        // "sourceMap": true,                                /* Генерировать source map файлы для JS. */
+        // "inlineSourceMap": true,                          /* Встраивать sourcemap прямо в JS-файлы. */
+        // "noEmit": true,                                   /* Не генерировать выходные файлы. */
+        // "outFile": "./",                                  /* Объединить всё в один JS-файл. */
+        "outDir": "./dist"                                   /* Указать папку для всех сгенерированных файлов. */,
+        // "removeComments": true,                           /* Не включать комментарии в выходной код. */
+        // "importHelpers": true,                            /* Использовать функции из tslib вместо генерации в каждом файле. */
+        // "downlevelIteration": true,                       /* Поддержка итераций для старых версий JS. */
+        // "sourceRoot": "",                                 /* Корень исходников для отладки. */
+        // "mapRoot": "",                                    /* Расположение sourcemap файлов для отладки. */
+        // "inlineSources": true,                            /* Включить исходный код в sourcemap. */
+        // "emitBOM": true,                                  /* Добавить BOM в начало файлов. */
+        // "newLine": "crlf",                                /* Установить символ новой строки в файлах. */
+        // "stripInternal": true,                            /* Не генерировать декларации с '@internal'. */
+        // "noEmitHelpers": true,                            /* Не генерировать вспомогательные функции. */
+        // "noEmitOnError": true,                            /* Не генерировать файлы при наличии ошибок. */
+        // "preserveConstEnums": true,                       /* Сохранять 'const enum' в выходном коде. */
+        // "declarationDir": "./",                           /* Папка для .d.ts файлов. */
+
+        /* Совместимость */
+        // "isolatedModules": true,                          /* Каждый файл можно транслировать отдельно. */
+        // "verbatimModuleSyntax": true,                     /* Не изменять импорты/экспорты — оставить как есть. */
+        // "isolatedDeclarations": true,                     /* Требовать аннотаций для генерации деклараций. */
+        // "erasableSyntaxOnly": true,                       /* Запретить нестандартные конструкции. */
+        // "allowSyntheticDefaultImports": true,             /* Разрешить 'import x from y', даже если нет экспортов по умолчанию. */
+        "esModuleInterop": true                              /* Генерировать совместимый код для импорта CommonJS-модулей. Также включает 'allowSyntheticDefaultImports'. */,
+        // "preserveSymlinks": true,                         /* Не разрешать симлинки до реальных путей. */
+
+        "forceConsistentCasingInFileNames": true             /* Требовать соблюдения регистра в путях импортов. */,
+
+        /* Проверка типов */
+        "strict": true                                       /* Включить все параметры строгой проверки. */,
+        "noImplicitAny": true                                /* Ошибка, если тип 'any' подразумевается неявно. */,
+        // "strictNullChecks": true,                         /* Учитывать 'null' и 'undefined' при проверке. */
+        // "strictFunctionTypes": true,                      /* Строгая проверка типов при присваивании функций. */
+        // "strictBindCallApply": true,                      /* Проверка аргументов для bind/call/apply. */
+        // "strictPropertyInitialization": true,             /* Проверка инициализации свойств в конструкторах. */
+        // "strictBuiltinIteratorReturn": true,              /* Строгая проверка возврата встроенных итераторов. */
+        // "noImplicitThis": true,                           /* Ошибка при неявном 'this: any'. */
+        // "useUnknownInCatchVariables": true,               /* Тип переменной в catch по умолчанию — 'unknown'. */
+        // "alwaysStrict": true,                             /* Всегда добавлять 'use strict'. */
+        // "noUnusedLocals": true,                           /* Ошибка при неиспользуемых переменных. */
+        // "noUnusedParameters": true,                       /* Ошибка при неиспользуемых параметрах. */
+        // "exactOptionalPropertyTypes": true,               /* Точно интерпретировать optional-свойства. */
+        // "noImplicitReturns": true,                        /* Ошибка, если путь функции не возвращает значение. */
+        // "noFallthroughCasesInSwitch": true,               /* Ошибка при fallthrough в switch. */
+        // "noUncheckedIndexedAccess": true,                 /* Добавить 'undefined' при доступе по индексу. */
+        // "noImplicitOverride": true,                       /* Требовать 'override' при переопределении. */
+        // "noPropertyAccessFromIndexSignature": true,       /* Запретить доступ к свойствам через индекс, если они не объявлены. */
+        // "allowUnusedLabels": true,                        /* Не проверять неиспользуемые метки. */
+        // "allowUnreachableCode": true,                     /* Не проверять недостижимый код. */
+
+        /* Завершённость */
+        // "skipDefaultLibCheck": true,                      /* Пропустить проверку стандартных .d.ts файлов. */
+        "skipLibCheck": true                                 /* Пропустить проверку всех .d.ts файлов. */
+    }
+}
