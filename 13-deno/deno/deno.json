@@ -1,0 +1,11 @@
+{
+    "tasks": {
+        "dev": "deno run --allow-net app.ts"
+    },
+    "imports": {
+        "@std/assert": "jsr:@std/assert@1",
+        "npm:": "npm:",
+        "npm:path-to-regexp": "npm:path-to-regexp@^6.3.0"
+    },
+    "nodeModulesDir": "auto"
+}
